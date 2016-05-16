@@ -17,9 +17,5 @@
 
 #pragma once
 
-enum class PIXEL_TYPE
-{
-	ARGB8888,
-};
 
-void render(unsigned char* pixels, PIXEL_TYPE type, int width, int height, int pitch);
+void render(unsigned char* pixels, int width, int height, int pitch);

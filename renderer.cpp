@@ -16,9 +16,37 @@
 */
 
 #include "renderer.h"
+#include <string.h>
 
-
-void render(unsigned char* pixels, PIXEL_TYPE type, int width, int height, int pitch)
+struct Surface
 {
+	unsigned char* pixels;
+	int width;
+	int height; 
+	int pitch;
 
+	void SetPixel(int x, int y, int color)
+	{
+		auto offset = pixels + ((y * pitch) + (x * 4));
+		*((int*)pixels) = color;
+	}
+};
+
+void line(int x0, int y0, int x1, int y1, int color, Surface& surface)
+{
+	for (float t = 0.f; t<1.f; t += .01f) {
+		int x = (int)(x0*(1.f - t) + x1*t);
+		int y = (int)(y0*(1.f - t) + y1*t);
+		
+		surface.SetPixel(x, y, color);
+
+	}
+}
+
+void render(unsigned char* pixels, int width, int height, int pitch)
+{
+	auto surface = Surface{ pixels, width, height, pitch };
+
+	line(13, 20, 80, 40, 0xFFFFFFFF, surface);
+		
 }

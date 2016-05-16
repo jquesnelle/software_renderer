@@ -24,7 +24,7 @@ int main(int argc, char** argv)
 {
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0)
 	{
-		std::cerr << "SDL_Init error " << SDL_GetError() << std::endl;
+		std::cerr << "SDL_Init error: " << SDL_GetError() << std::endl;
 		return 1;
 	}
 
@@ -37,18 +37,7 @@ int main(int argc, char** argv)
 
 	if (SDL_CreateWindowAndRenderer(window_width, window_height, SDL_WINDOW_RESIZABLE, &window, &renderer) != 0)
 	{
-		std::cerr << "SDL_CreateWindowAndRenderer error " << SDL_GetError() << std::endl;
-		SDL_Quit();
-		return 1;
-	}
-
-	PIXEL_TYPE pixel_type;
-	auto native_pixel_format = SDL_GetWindowPixelFormat(window);
-	switch (native_pixel_format)
-	{
-	case SDL_PIXELFORMAT_ARGB8888: pixel_type = PIXEL_TYPE::ARGB8888; break;
-	default:
-		std::cerr << "Unknown native pixel type" << std::endl;
+		std::cerr << "SDL_CreateWindowAndRenderer error: " << SDL_GetError() << std::endl;
 		SDL_Quit();
 		return 1;
 	}
@@ -61,11 +50,11 @@ int main(int argc, char** argv)
 	while (keep_running)
 	{	
 		if (texture == nullptr)
-			texture = SDL_CreateTexture(renderer, native_pixel_format, SDL_TEXTUREACCESS_STREAMING, window_width, window_height);
+			texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, window_width, window_height);
 
-		if (SDL_LockTexture(texture, NULL, (void**)(&pixels), &pitch) != 0)
+		if (SDL_LockTexture(texture, NULL, (void**)(&pixels), &pitch) == 0)
 		{
-			render(pixels, pixel_type, window_width, window_height, pitch);
+			render(pixels, window_width, window_height, pitch);
 
 			SDL_UnlockTexture(texture);
 			SDL_RenderCopy(renderer, texture, NULL, NULL);
