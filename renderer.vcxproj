@@ -108,13 +108,16 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
-      <AdditionalDependencies>SDL2-2.0.4\lib\x64\SDL2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2-2.0.4\lib\x64\SDL2.lib;SDL2-2.0.4\lib\x64\SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(SolutionDir)SDL2-2.0.4\lib\x64\SDL2.dll" "$(TargetDir)"</Command>
+      <Command>copy "$(SolutionDir)SDL2-2.0.4\lib\x64\SDL2.dll" "$(TargetDir)"
+copy "$(SolutionDir)SDL2-2.0.4\lib\x64\libfreetype-6.dll" "$(TargetDir)"
+copy "$(SolutionDir)SDL2-2.0.4\lib\x64\SDL2_ttf.dll" "$(TargetDir)"
+copy "$(SolutionDir)SDL2-2.0.4\lib\x64\zlib1.dll" "$(TargetDir)"</Command>
     </PostBuildEvent>
     <PostBuildEvent>
-      <Message>Copy x64 SDL DLL</Message>
+      <Message>Copy x64 SDL DLLs</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -152,13 +155,16 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
-      <AdditionalDependencies>SDL2-2.0.4\lib\x64\SDL2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2-2.0.4\lib\x64\SDL2.lib;SDL2-2.0.4\lib\x64\SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(SolutionDir)SDL2-2.0.4\lib\x64\SDL2.dll" "$(TargetDir)"</Command>
+      <Command>copy "$(SolutionDir)SDL2-2.0.4\lib\x64\SDL2.dll" "$(TargetDir)"
+copy "$(SolutionDir)SDL2-2.0.4\lib\x64\libfreetype-6.dll" "$(TargetDir)"
+copy "$(SolutionDir)SDL2-2.0.4\lib\x64\SDL2_ttf.dll" "$(TargetDir)"
+copy "$(SolutionDir)SDL2-2.0.4\lib\x64\zlib1.dll" "$(TargetDir)"</Command>
     </PostBuildEvent>
     <PostBuildEvent>
-      <Message>Copy x64 SDL DLL</Message>
+      <Message>Copy x64 SDL DLLs</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -166,6 +172,7 @@
     <ClCompile Include="renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="fps.h" />
     <ClInclude Include="renderer.h" />
     <ClInclude Include="SDL2-2.0.4\include\begin_code.h" />
     <ClInclude Include="SDL2-2.0.4\include\close_code.h" />

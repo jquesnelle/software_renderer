@@ -16,7 +16,8 @@
 */
 
 #include "renderer.h"
-#include <string.h>
+#include <cstdlib>
+#include <utility>
 
 struct Surface
 {
@@ -25,28 +26,56 @@ struct Surface
 	int height; 
 	int pitch;
 
-	void SetPixel(int x, int y, int color)
+	void inline SetPixel(int x, int y, int color)
 	{
 		auto offset = pixels + ((y * pitch) + (x * 4));
-		*((int*)pixels) = color;
+		*((int*)offset) = color;
+	}
+
+	void Line(int x0, int y0, int x1, int y1, int color)
+	{
+		bool steep = false;
+
+		if (std::abs(x0 - x1) < std::abs(y0 - y1))
+		{
+			std::swap(x0, x1);
+			std::swap(y0, y1);
+			steep = true;
+		}
+
+		if (x0 > x1)
+		{
+			std::swap(x0, x1);
+			std::swap(y0, y1);
+		}
+
+		int dx = x1 - x0;
+		int dy = y1 - y0;
+		int derror2 = std::abs(dy) * 2;
+		int error2 = 0;
+		int y = y0;
+
+		for (int x = x0; x < x1; ++x)
+		{
+			if (steep)
+				SetPixel(y, x, color);
+			else
+				SetPixel(x, y, color);
+
+			if ((error2 += derror2) > dx)
+			{
+				y += y1 > y0 ? 1 : -1;
+				error2 -= dx * 2;
+			}
+		}
+
 	}
 };
-
-void line(int x0, int y0, int x1, int y1, int color, Surface& surface)
-{
-	for (float t = 0.f; t<1.f; t += .01f) {
-		int x = (int)(x0*(1.f - t) + x1*t);
-		int y = (int)(y0*(1.f - t) + y1*t);
-		
-		surface.SetPixel(x, y, color);
-
-	}
-}
 
 void render(unsigned char* pixels, int width, int height, int pitch)
 {
 	auto surface = Surface{ pixels, width, height, pitch };
 
-	line(13, 20, 80, 40, 0xFFFFFFFF, surface);
+	surface.Line(13, 20, width/4, height/4, 0xFFFFFFFF);
 		
 }
