@@ -17,31 +17,20 @@
 
 #pragma once
 
-#include "vec.h"
-#include <vector>
-
-class Wavefront
+struct Surface
 {
-private:
-	std::vector<Vec3f> vertices;
-	std::vector<std::vector<size_t>> faces;
+	unsigned char* pixels;
+	int width;
+	int height;
+	int pitch;
 
-public:
-	Wavefront(const char* path);
-	~Wavefront();
-
-	size_t NumberOfVertices() { return vertices.size(); }
-	size_t NumberOfFaces() { return faces.size(); }
-
-	inline const Vec3f& Vertex(size_t index) const
+	void inline SetPixel(int x, int y, int color)
 	{
-#ifndef NDEBUG
-		if (index >= vertices.size())
-			throw std::out_of_range("Vertex access on wavefront out of range");
-#endif
-		return vertices[index];
+		if (x < 0 || x >= width || y < 0 || y >= height)
+			return;
+		auto offset = pixels + ((y * pitch) + (x * 4));
+		*((int*)offset) = color;
 	}
 
-	std::vector<const Vec3f*> Face(size_t index) const;
-
+	void Line(int x0, int y0, int x1, int y1, int color);
 };

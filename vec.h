@@ -28,14 +28,14 @@ private:
 public:
 
 	constexpr Vec() : x(0), y(0) {}
-	constexpr Vec(float _x, float _y) : x(_x), y(_y) {}
-	constexpr Vec(const Vec& rhs) : raw(rhs.raw) {}
+	constexpr Vec(const Vec& rhs) : elements(rhs.elements) {}
 	constexpr Vec(const std::array<T, D>& rhs) : elements(rhs) {}
+	constexpr Vec(std::array<T, D>&& rhs) : elements(rhs) {}
 
 	T& operator[](size_t index)
 	{
 #ifndef NDEBUG
-		return (index >= 0 && index < D) ? elements[index] : throw std::out_of_range("Invalid Vec2 element access");
+		return (index >= 0 && index < D) ? elements[index] : throw std::out_of_range("Invalid Vec element access");
 #else
 		return elements[index];
 #endif

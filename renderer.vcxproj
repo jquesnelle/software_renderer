@@ -178,6 +178,7 @@ copy "$(SolutionDir)SDL2-2.0.4\lib\x64\zlib1.dll" "$(TargetDir)"</Command>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="renderer.cpp" />
+    <ClCompile Include="surface.cpp" />
     <ClCompile Include="wavefront.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -253,6 +254,7 @@ copy "$(SolutionDir)SDL2-2.0.4\lib\x64\zlib1.dll" "$(TargetDir)"</Command>
     <ClInclude Include="SDL2-2.0.4\include\SDL_types.h" />
     <ClInclude Include="SDL2-2.0.4\include\SDL_version.h" />
     <ClInclude Include="SDL2-2.0.4\include\SDL_video.h" />
+    <ClInclude Include="surface.h" />
     <ClInclude Include="vec.h" />
     <ClInclude Include="wavefront.h" />
   </ItemGroup>

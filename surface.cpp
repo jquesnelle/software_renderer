@@ -15,33 +15,45 @@
 *	along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
 
-#include "vec.h"
-#include <vector>
+#include "surface.h"
+#include <utility>
 
-class Wavefront
+void Surface::Line(int x0, int y0, int x1, int y1, int color)
 {
-private:
-	std::vector<Vec3f> vertices;
-	std::vector<std::vector<size_t>> faces;
+	bool steep = false;
 
-public:
-	Wavefront(const char* path);
-	~Wavefront();
-
-	size_t NumberOfVertices() { return vertices.size(); }
-	size_t NumberOfFaces() { return faces.size(); }
-
-	inline const Vec3f& Vertex(size_t index) const
+	if (std::abs(x0 - x1) < std::abs(y0 - y1))
 	{
-#ifndef NDEBUG
-		if (index >= vertices.size())
-			throw std::out_of_range("Vertex access on wavefront out of range");
-#endif
-		return vertices[index];
+		std::swap(x0, y0);
+		std::swap(x1, y1);
+		steep = true;
 	}
 
-	std::vector<const Vec3f*> Face(size_t index) const;
+	if (x0 > x1)
+	{
+		std::swap(x0, x1);
+		std::swap(y0, y1);
+	}
 
-};
+	int dx = x1 - x0;
+	int dy = y1 - y0;
+	int derror2 = std::abs(dy) * 2;
+	int error2 = 0;
+	int y = y0;
+
+	for (int x = x0; x < x1; ++x)
+	{
+		if (steep)
+			SetPixel(y, x, color);
+		else
+			SetPixel(x, y, color);
+
+		if ((error2 += derror2) > dx)
+		{
+			y += y1 > y0 ? 1 : -1;
+			error2 -= dx * 2;
+		}
+	}
+
+}

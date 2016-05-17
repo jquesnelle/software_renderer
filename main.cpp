@@ -108,6 +108,8 @@ int main(int argc, char** argv)
 				break;
 			}
 		}
+
+		SDL_Delay(500);
 	}
 
 	SDL_DestroyRenderer(renderer);

@@ -16,66 +16,36 @@
 */
 
 #include "renderer.h"
-#include <cstdlib>
-#include <utility>
+#include "surface.h"
+#include "wavefront.h"
 
-struct Surface
-{
-	unsigned char* pixels;
-	int width;
-	int height; 
-	int pitch;
-
-	void inline SetPixel(int x, int y, int color)
-	{
-		auto offset = pixels + ((y * pitch) + (x * 4));
-		*((int*)offset) = color;
-	}
-
-	void Line(int x0, int y0, int x1, int y1, int color)
-	{
-		bool steep = false;
-
-		if (std::abs(x0 - x1) < std::abs(y0 - y1))
-		{
-			std::swap(x0, x1);
-			std::swap(y0, y1);
-			steep = true;
-		}
-
-		if (x0 > x1)
-		{
-			std::swap(x0, x1);
-			std::swap(y0, y1);
-		}
-
-		int dx = x1 - x0;
-		int dy = y1 - y0;
-		int derror2 = std::abs(dy) * 2;
-		int error2 = 0;
-		int y = y0;
-
-		for (int x = x0; x < x1; ++x)
-		{
-			if (steep)
-				SetPixel(y, x, color);
-			else
-				SetPixel(x, y, color);
-
-			if ((error2 += derror2) > dx)
-			{
-				y += y1 > y0 ? 1 : -1;
-				error2 -= dx * 2;
-			}
-		}
-
-	}
-};
 
 void render(unsigned char* pixels, int width, int height, int pitch)
 {
 	auto surface = Surface{ pixels, width, height, pitch };
 
-	surface.Line(13, 20, width/4, height/4, 0xFFFFFFFF);
+	static Wavefront model("data/sample_models/african_head/african_head.obj");
+
+	const float half_width = width / 2.0f;
+	const float half_height = height / 2.0f;
+
+	auto num_faces = model.NumberOfFaces();
+	for (size_t i = 0; i < num_faces; ++i)
+	{
+		const auto face = model.Face(i);
+
+		for (size_t v = 0; v < 3; ++v)
+		{
+			const auto& v0 = *face[v];
+			const auto& v1 = *face[(v + 1) % 3];
+
+			int x0 = (int)((v0[0] + 1.0f) * half_width);
+			int y0 = height - (int)((v0[1] + 1.0f) * half_height);
+			int x1 = (int)((v1[0] + 1.0f) * half_width);
+			int y1 = height - (int)((v1[1] + 1.0f) * half_height);
+
+			surface.Line(x0, y0, x1, y1, 0xFFFFFFFF);
+		}
+	}
 		
 }

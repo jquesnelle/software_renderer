@@ -16,10 +16,50 @@
 */
 
 #include "wavefront.h"
+#include <fstream>
+#include <string>
+#include <iostream>
+#include <sstream>
 
 Wavefront::Wavefront(const char* path)
 {
+	std::ifstream in;
+	std::string line;
 
+	in.open(path, std::ifstream::in);
+	if (in.fail())
+		throw std::runtime_error(std::string("Could not open ") + path);
+
+	while (!in.eof())
+	{
+		std::getline(in, line);
+		std::istringstream parse(line);
+
+		char work;
+		if (line.compare(0, 2, "v ") == 0)
+		{
+			float x, y, z;
+
+			parse >> work;
+			parse >> x;
+			parse >> y;
+			parse >> z;
+
+			vertices.emplace_back(std::array<float, 3>{ {x, y, z}});
+		}
+		else if (line.compare(0, 2, "f ") == 0)
+		{
+			std::vector<size_t> face;
+			size_t index, iwork;
+			
+			parse >> work;
+
+			while (parse >> index >> work >> iwork >> work >> iwork)
+				face.push_back(--index);
+
+			faces.push_back(std::move(face));
+		}
+	}
 }
 
 Wavefront::~Wavefront()
@@ -27,11 +67,12 @@ Wavefront::~Wavefront()
 
 }
 
-std::vector<std::reference_wrapper<const Vec3f>> Wavefront::Face(size_t index) const
+std::vector<const Vec3f*> Wavefront::Face(size_t index) const
 {
-	std::vector<std::reference_wrapper<const Vec3f>> ret;
-	std::for_each(vertices.begin(), vertices.end(), [&](const Vec3f& vertex) {
-		ret.push_back(vertex);
+	std::vector<const Vec3f*> ret;
+	const auto& face_indices = faces[index];
+	std::for_each(face_indices.begin(), face_indices.end(), [&](size_t index) {
+		ret.push_back(&Vertex(index));
 	});
 	return ret;
 }
