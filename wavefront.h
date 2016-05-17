@@ -17,38 +17,31 @@
 
 #pragma once
 
-#include "SDL_timer.h"
-#include <algorithm>
+#include "vec.h"
+#include <vector>
 
-class FPS
+class Wavefront
 {
-public:
-	static const unsigned int NUM_MS_PER_FRAME = 1 << 3;
-
-	void FrameStart()
-	{
-		unsigned int now = SDL_GetTicks();
-		unsigned int time = std::max(1u, now - last_frame_time);
-		if (ms_valid == NUM_MS_PER_FRAME)
-			ms_sum -= ms_per_frame[index];
-		else
-			++ms_valid;
-		ms_per_frame[index] = time;
-		index = ((index + 1) & (NUM_MS_PER_FRAME - 1));
-		ms_sum += time;
-		last_frame_time = now;
-	}
-
-	float GetFPS() const
-	{
-		return 1000.0f / ((float)ms_sum / (float)ms_valid);
-	}
-
 private:
-	unsigned int ms_per_frame[NUM_MS_PER_FRAME] = { 0 };
-	unsigned int ms_valid = 0;
-	unsigned int ms_sum = 0;
-	unsigned int last_frame_time = 0;
-	unsigned int index = 0;
-	
+	std::vector<Vec3f> vertices;
+	std::vector<std::vector<size_t>> faces;
+
+public:
+	Wavefront(const char* path);
+	~Wavefront();
+
+	size_t NumberOfVertices();
+	size_t NumberOfFaces();
+
+	const Vec3f& Vertex(size_t index) const
+	{
+#ifndef NDEBUG
+		if (index >= vertices.size())
+			throw std::out_of_range("Vertex access on wavefront out of range");
+#endif
+		return vertices[index];
+	}
+
+	std::vector<std::reference_wrapper<const Vec3f>> Face(size_t index) const;
+
 };

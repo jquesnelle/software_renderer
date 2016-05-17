@@ -73,16 +73,16 @@ int main(int argc, char** argv)
 			SDL_UnlockTexture(texture);
 			SDL_RenderCopy(renderer, texture, NULL, NULL);
 
+			float the_fps = fps.GetFPS();
 			char fps_txt[32];
-			snprintf(fps_txt, 32, "%.1f", fps.GetFPS());
+			snprintf(fps_txt, 32, "%.1f", the_fps);
 			auto fps_surface = TTF_RenderText_Solid(font, fps_txt, SDL_Color{ 0, 0, 255, 255 });
 			auto fps_texture = SDL_CreateTextureFromSurface(renderer, fps_surface);
 			SDL_Rect fps_dest = { window_width - 60, 10, 40, 24 };
 			SDL_RenderCopy(renderer, fps_texture, NULL, &fps_dest);
-
 			SDL_FreeSurface(fps_surface);
 			SDL_DestroyTexture(fps_texture);
-
+			
 			SDL_RenderPresent(renderer);
 		}
 
