@@ -30,6 +30,9 @@
     <ClCompile Include="surface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="vec.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SDL2-2.0.4\include\begin_code.h">

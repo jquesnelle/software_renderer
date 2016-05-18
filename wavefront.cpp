@@ -45,7 +45,7 @@ Wavefront::Wavefront(const char* path)
 			parse >> y;
 			parse >> z;
 
-			vertices.emplace_back(std::array<float, 3>{ {x, y, z}});
+			vertices.emplace_back(Vec3f{x, y, z});
 		}
 		else if (line.compare(0, 2, "f ") == 0)
 		{

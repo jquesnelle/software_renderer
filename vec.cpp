@@ -15,25 +15,5 @@
 *	along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
-
 #include "vec.h"
 
-struct Surface
-{
-	unsigned char* pixels;
-	int width;
-	int height;
-	int pitch;
-
-	void inline SetPixel(int x, int y, int color)
-	{
-		if (x < 0 || x >= width || y < 0 || y >= height)
-			return;
-		auto offset = pixels + ((y * pitch) + (x * 4));
-		*((int*)offset) = color;
-	}
-
-	void Line(int x0, int y0, int x1, int y1, int color);
-	void Triangle(const std::array<Vec2i, 3>& vertices, int color);
-};

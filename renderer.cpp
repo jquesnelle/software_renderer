@@ -23,7 +23,7 @@
 void render(unsigned char* pixels, int width, int height, int pitch)
 {
 	auto surface = Surface{ pixels, width, height, pitch };
-
+#if 0
 	static Wavefront model("data/sample_models/african_head/african_head.obj");
 
 	const float half_width = width / 2.0f;
@@ -47,5 +47,10 @@ void render(unsigned char* pixels, int width, int height, int pitch)
 			surface.Line(x0, y0, x1, y1, 0xFFFFFFFF);
 		}
 	}
+#endif
+
+	std::array<Vec2i, 3> points{ Vec2i{10,10}, Vec2i{100, 30}, Vec2i{190, 160} };
+
+	surface.Triangle(points, 0xFFFFFFFF);
 		
 }
