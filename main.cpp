@@ -109,7 +109,7 @@ int main(int argc, char** argv)
 			}
 		}
 
-		SDL_Delay(500);
+		//SDL_Delay(500);
 	}
 
 	SDL_DestroyRenderer(renderer);

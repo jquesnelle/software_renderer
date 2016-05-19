@@ -22,6 +22,7 @@
 #include <cassert>
 
 #define WITH_SSE2
+#define WITH_SSE4
 
 #ifdef WITH_SSE2
 
@@ -74,10 +75,19 @@ public:
 		return elements[index];
 	}
 
+	T norm() const
+	{
+		T ret = 0;
+		for (size_t i = 0; i < D; i++)
+			ret += elements[i] * elements[i];
+		return std::sqrt(ret);
+	}
+
 	template<typename T> friend Vec<3, T> CrossProduct(const Vec<3, T>& lhs, const Vec<3, T>& rhs);
-	
+
 #ifdef WITH_SSE2
 	friend Vec<3, float> CrossProduct(const Vec<3, float>& lhs, const Vec<3, float>& rhs);
+	friend Vec<3, float> operator-(Vec<3, float> lhs, const Vec<3, float>& rhs);
 #endif
 
 };
@@ -100,18 +110,36 @@ template<typename T> Vec<3, T> Barycentric(const std::array<Vec2i, 3>& vertices,
 {
 	auto u = CrossProduct(
 		Vec<3, T>
-		{
-			(T)(vertices[2][0] - vertices[0][0]),
+	{
+		(T)(vertices[2][0] - vertices[0][0]),
 			(T)(vertices[1][0] - vertices[0][0]),
 			(T)(vertices[0][0] - point[0])
-		},
+	},
 		Vec<3, T>
 		{
 			(T)(vertices[2][1] - vertices[0][1]),
-			(T)(vertices[1][1] - vertices[0][1]),
-			(T)(vertices[0][1] - point[1])
+				(T)(vertices[1][1] - vertices[0][1]),
+				(T)(vertices[0][1] - point[1])
 		}
-	);
+		);
 	return std::abs(u[2]) < (T)1 ? Vec<3, T>{(T)-1, (T)1, (T)1} :
 		Vec<3, T>{ ((T)1) - (u[0] + u[1]) / u[2], u[1] / u[2], u[0] / u[2] };
 }
+
+template<size_t D, typename T> Vec<D, T> operator-(Vec<D, T> lhs, const Vec<D, T>& rhs)
+{
+	for (size_t i = 0; i < D; ++i)
+		lhs[i] -= rhs[i];
+	return lhs;
+}
+
+#ifdef WITH_SSE4
+template<> float Vec<3, float>::norm() const
+{
+	ALIGNED float ret;
+	__m128 v = *(const __m128*)elements;
+	_mm_dp_ps(v, v, 0x71); //7 -- multiply top 3 elements, 1 -- write result to first element
+	_mm_store_ss(&ret, v);
+	return ret;
+}
+#endif

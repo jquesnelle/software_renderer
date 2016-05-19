@@ -18,6 +18,7 @@
 #include "renderer.h"
 #include "surface.h"
 #include "wavefront.h"
+#include <cstdlib>
 
 
 void render(unsigned char* pixels, int width, int height, int pitch)
@@ -32,13 +33,20 @@ void render(unsigned char* pixels, int width, int height, int pitch)
 	auto num_faces = model.NumberOfFaces();
 	for (size_t i = 0; i < num_faces; ++i)
 	{
-		const auto world = model.Face(i);
+		const auto face = model.Face(i);
 
-		Vec2i screen;
+		std::array<Vec2i, 3> screen;
 		for (size_t j = 0; j < 3; ++j)
 		{
-			
+			const auto& world = face[j];
+			auto x = world.get()[0];
+			auto y = world.get()[1];
+			screen[j] = Vec2i{ (int)((x + 1.0f)*half_width), height - (int)((y + 1.0f) * half_height) };
 		}
+
+		Vec3f normal = CrossProduct(face[2] - face[0], face[1] - face[0]); //two vectors for sides of triangle -> cross product gives is normal
+
+		surface.Triangle(screen,  Surface::RGB(std::rand() % 255, std::rand() % 255, std::rand() % 255));
 	}
 		
 }

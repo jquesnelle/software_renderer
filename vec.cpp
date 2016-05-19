@@ -18,20 +18,31 @@
 #include "vec.h"
 
 #ifdef WITH_SSE2
+
 Vec<3, float> CrossProduct(const Vec<3, float>& lhs, const Vec<3, float>& rhs)
 {
 	Vec<3, float> ret;
 
-	__m128* __restrict l = (__m128*)lhs.elements;
-	__m128* __restrict r = (__m128*)rhs.elements;
-	__m128* __restrict f = (__m128*)ret.elements;
+	__m128 l = *(__m128*)lhs.elements;
+	__m128 r = *(__m128*)rhs.elements;
+	__m128* f = (__m128*)ret.elements;
 
 	*f = _mm_sub_ps(
-		_mm_mul_ps(_mm_shuffle_ps(*l, *l, _MM_SHUFFLE(3, 0, 2, 1)), _mm_shuffle_ps(*r, *r, _MM_SHUFFLE(3, 1, 0, 2))),
-		_mm_mul_ps(_mm_shuffle_ps(*l, *l, _MM_SHUFFLE(3, 1, 0, 2)), _mm_shuffle_ps(*r, *r, _MM_SHUFFLE(3, 0, 2, 1)))
+		_mm_mul_ps(_mm_shuffle_ps(l, l, _MM_SHUFFLE(3, 0, 2, 1)), _mm_shuffle_ps(r, r, _MM_SHUFFLE(3, 1, 0, 2))),
+		_mm_mul_ps(_mm_shuffle_ps(l, l, _MM_SHUFFLE(3, 1, 0, 2)), _mm_shuffle_ps(r, r, _MM_SHUFFLE(3, 0, 2, 1)))
 	);
 
 	return ret;
-
 }
+
+Vec<3, float> operator-(Vec<3, float> lhs, const Vec<3, float>& rhs)
+{
+	__m128 *l = (__m128*)lhs.elements;
+	__m128 *r = (__m128*)rhs.elements;
+
+	*l = _mm_sub_ps(*l, *r);
+
+	return lhs;
+}
+
 #endif

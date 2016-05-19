@@ -18,7 +18,6 @@
 #pragma once
 
 #include "vec.h"
-
 struct Surface
 {
 	unsigned char* pixels;
@@ -36,4 +35,9 @@ struct Surface
 
 	void Line(int x0, int y0, int x1, int y1, int color);
 	void Triangle(const std::array<Vec2i, 3>& vertices, int color);
+
+	static constexpr int RGB(int r, int g, int b)
+	{
+		return (r << 16) | (g << 8) | (b) | 0xff000000;
+	}
 };
