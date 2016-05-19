@@ -49,15 +49,17 @@ Wavefront::Wavefront(const char* path)
 		}
 		else if (line.compare(0, 2, "f ") == 0)
 		{
-			std::vector<size_t> face;
-			size_t index, iwork;
+			size_t index[3], iwork, indexer = 0, in;
 			
 			parse >> work;
 
-			while (parse >> index >> work >> iwork >> work >> iwork)
-				face.push_back(--index);
+			while (parse >> in >> work >> iwork >> work >> iwork)
+			{
+				if (indexer < 3)
+					index[indexer++] = in - 1;
+			}
 
-			faces.push_back(std::move(face));
+			faces.push_back(std::array<std::reference_wrapper<Vec3f>, 3>{Vertex(index[0]), Vertex(index[1]), Vertex(index[2])});
 		}
 	}
 }
@@ -65,14 +67,4 @@ Wavefront::Wavefront(const char* path)
 Wavefront::~Wavefront()
 {
 
-}
-
-std::vector<const Vec3f*> Wavefront::Face(size_t index) const
-{
-	std::vector<const Vec3f*> ret;
-	const auto& face_indices = faces[index];
-	std::for_each(face_indices.begin(), face_indices.end(), [&](size_t index) {
-		ret.push_back(&Vertex(index));
-	});
-	return ret;
 }

@@ -24,7 +24,16 @@ class Wavefront
 {
 private:
 	std::vector<Vec3f> vertices;
-	std::vector<std::vector<size_t>> faces;
+	std::vector<std::array<std::reference_wrapper<Vec3f>, 3>> faces;
+
+	inline Vec3f& Vertex(size_t index)
+	{
+#ifndef NDEBUG
+		if (index >= vertices.size())
+			throw std::out_of_range("Vertex access on wavefront out of range");
+#endif
+		return vertices[index];
+	}
 
 public:
 	Wavefront(const char* path);
@@ -42,6 +51,13 @@ public:
 		return vertices[index];
 	}
 
-	std::vector<const Vec3f*> Face(size_t index) const;
+	inline const std::array<std::reference_wrapper<Vec3f>, 3>& Face(size_t index) const
+	{
+#ifndef NDEBUG
+		if (index > faces.size())
+			throw std::out_of_range("Face access on wavefront out of range");
+#endif
+		return faces[index];
+	}
 
 };
