@@ -19,6 +19,7 @@
 
 #include <stdexcept>
 #include <array>
+#include <cassert>
 
 #define WITH_SSE2
 
@@ -63,28 +64,27 @@ public:
 
 	inline T& operator[](size_t index)
 	{
-#ifndef NDEBUG
-		return (index >= 0 && index < D) ? elements[index] : throw std::out_of_range("Invalid Vec element access"), elements[0];
-#else
+		assert(index >= 0 && index < D);
 		return elements[index];
-#endif
 	}
 
-	constexpr const T& operator[](size_t index) const
+	inline const T& operator[](size_t index) const
 	{
-#ifndef NDEBUG
-		return (index >= 0 && index < D) ? elements[index] : throw std::out_of_range("Invalid Vec element access");
-#else
+		assert(index >= 0 && index < D);
 		return elements[index];
-#endif
 	}
 
 	template<typename T> friend Vec<3, T> CrossProduct(const Vec<3, T>& lhs, const Vec<3, T>& rhs);
+	
+#ifdef WITH_SSE2
+	friend Vec<3, float> CrossProduct(const Vec<3, float>& lhs, const Vec<3, float>& rhs);
+#endif
 
 };
 
 using Vec3f = Vec<3, float>;
 using Vec2i = Vec<2, int>;
+
 
 template<typename T> Vec<3, T> CrossProduct(const Vec<3, T>& lhs, const Vec<3, T>& rhs)
 {
@@ -95,25 +95,6 @@ template<typename T> Vec<3, T> CrossProduct(const Vec<3, T>& lhs, const Vec<3, T
 		lhs[0] * rhs[1] - lhs[1] * rhs[0]
 	};
 }
-
-#ifdef WITH_SSE2
-template<typename T> Vec<3, float> CrossProduct(const Vec<3, float>& lhs, const Vec<3, float>& rhs)
-{
-	Vec<3, float> ret;
-
-	__m128* __restrict l = (__m128*)lhs.elements;
-	__m128* __restrict r = (__m128*)rhs.elements;
-	__m128* __restrict f = (__m128*)ret.elements;
-
-	*f = _mm_sub_ps(
-		_mm_mul_ps(_mm_shuffle_ps(*l, *l, _MM_SHUFFLE(3, 0, 2, 1)), _mm_shuffle_ps(*r, *r, _MM_SHUFFLE(3, 1, 0, 2))),
-		_mm_mul_ps(_mm_shuffle_ps(*l, a, _MM_SHUFFLE(3, 1, 0, 2)), _mm_shuffle_ps(*r, *r, _MM_SHUFFLE(3, 0, 2, 1)))
-	);
-
-	return ret;
-
-}
-#endif
 
 template<typename T> Vec<3, T> Barycentric(const std::array<Vec2i, 3>& vertices, const Vec2i& point)
 {
