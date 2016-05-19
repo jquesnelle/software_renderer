@@ -30,6 +30,8 @@ void render(unsigned char* pixels, int width, int height, int pitch)
 	const float half_width = width / 2.0f;
 	const float half_height = height / 2.0f;
 
+	const Vec3f light = Vec3f{ 0, 0, -1 };
+
 	auto num_faces = model.NumberOfFaces();
 	for (size_t i = 0; i < num_faces; ++i)
 	{
@@ -44,9 +46,19 @@ void render(unsigned char* pixels, int width, int height, int pitch)
 			screen[j] = Vec2i{ (int)((x + 1.0f)*half_width), height - (int)((y + 1.0f) * half_height) };
 		}
 
-		Vec3f normal = CrossProduct(face[2] - face[0], face[1] - face[0]); //two vectors for sides of triangle -> cross product gives is normal
+		const Vec3f& f2 = face[2];
+		const Vec3f& f1 = face[1];
+		const Vec3f& f0 = face[0];
+		Vec3f normal = CrossProduct(f2 - f0, f1 - f0); //two vectors for sides of triangle -> cross product gives is normal
+		normal.normalize();
 
-		surface.Triangle(screen,  Surface::RGB(std::rand() % 255, std::rand() % 255, std::rand() % 255));
+		float intensity = normal * light;
+		if (intensity > 0)
+		{
+			int intensity_color = (int)(intensity * 255);
+			surface.Triangle(screen, Surface::RGB(intensity_color, intensity_color, intensity_color));
+		}
+			
 	}
 		
 }

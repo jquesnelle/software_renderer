@@ -46,3 +46,17 @@ Vec<3, float> operator-(Vec<3, float> lhs, const Vec<3, float>& rhs)
 }
 
 #endif
+
+#ifdef WITH_SSE4
+
+float operator*(const Vec<3, float>& lhs, const Vec<3, float>& rhs)
+{
+	float ret;
+	__m128 l = *(const __m128*)lhs.elements;
+	__m128 r = *(const __m128*)rhs.elements;
+	__m128 dp = _mm_dp_ps(l, r, 0x71);
+	_mm_store_ss(&ret, dp);
+	return ret;
+}
+
+#endif
