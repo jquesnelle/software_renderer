@@ -107,8 +107,10 @@ public:
 
 };
 
+using Vec2f = Vec<2, float>;
 using Vec3f = Vec<3, float>;
 using Vec2i = Vec<2, int>;
+using Vec3i = Vec<3, int>;
 
 
 template<typename T> Vec<3, T> CrossProduct(const Vec<3, T>& lhs, const Vec<3, T>& rhs)
@@ -121,22 +123,22 @@ template<typename T> Vec<3, T> CrossProduct(const Vec<3, T>& lhs, const Vec<3, T
 	};
 }
 
-template<typename T> Vec<3, T> Barycentric(const std::array<Vec2i, 3>& vertices, const Vec2i& point)
+template<typename T, typename V> Vec<3, T> Barycentric(const std::array<V, 3>& vertices, const V& point)
 {
 	auto u = CrossProduct(
 		Vec<3, T>
-	{
-		(T)(vertices[2][0] - vertices[0][0]),
+		{
+			(T)(vertices[2][0] - vertices[0][0]),
 			(T)(vertices[1][0] - vertices[0][0]),
 			(T)(vertices[0][0] - point[0])
-	},
+		},
 		Vec<3, T>
 		{
 			(T)(vertices[2][1] - vertices[0][1]),
-				(T)(vertices[1][1] - vertices[0][1]),
-				(T)(vertices[0][1] - point[1])
+			(T)(vertices[1][1] - vertices[0][1]),
+			(T)(vertices[0][1] - point[1])
 		}
-		);
+	);
 	return std::abs(u[2]) < (T)1 ? Vec<3, T>{(T)-1, (T)1, (T)1} :
 		Vec<3, T>{ ((T)1) - (u[0] + u[1]) / u[2], u[1] / u[2], u[0] / u[2] };
 }

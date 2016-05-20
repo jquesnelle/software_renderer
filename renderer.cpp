@@ -20,10 +20,11 @@
 #include "wavefront.h"
 #include <cstdlib>
 
+static Surface surface;
 
 void render(unsigned char* pixels, int width, int height, int pitch)
 {
-	auto surface = Surface{ pixels, width, height, pitch };
+	surface.Prepare(pixels, width, height, pitch);
 
 	static Wavefront model("data/sample_models/african_head/african_head.obj");
 

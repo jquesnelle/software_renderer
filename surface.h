@@ -18,12 +18,26 @@
 #pragma once
 
 #include "vec.h"
-struct Surface
+#include <vector>
+
+class Surface
 {
+private:
+
+	std::vector<float> z_buffer;
 	unsigned char* pixels;
 	int width;
 	int height;
 	int pitch;
+
+public:
+
+	Surface();
+
+	int GetWidth() const { return width; }
+	int GetHeight() const { return height; }
+	
+	void Prepare(unsigned char* pixels, int width, int height, int pitch);
 
 	void inline SetPixel(int x, int y, int color)
 	{
@@ -35,6 +49,7 @@ struct Surface
 
 	void Line(int x0, int y0, int x1, int y1, int color);
 	void Triangle(const std::array<Vec2i, 3>& vertices, int color);
+	void Face(const std::array<Vec3f, 3>& vertices, int color); //3d face w/ z buffer
 
 	static constexpr int RGB(int r, int g, int b)
 	{
