@@ -139,7 +139,7 @@ template<typename T, typename V> Vec<3, T> Barycentric(const std::array<V, 3>& v
 			(T)(vertices[0][1] - point[1])
 		}
 	);
-	return std::abs(u[2]) < (T)1 ? Vec<3, T>{(T)-1, (T)1, (T)1} :
+	return std::abs(u[2]) <= (T)(1e-2) ? Vec<3, T>{(T)-1, (T)1, (T)1} :
 		Vec<3, T>{ ((T)1) - (u[0] + u[1]) / u[2], u[1] / u[2], u[0] / u[2] };
 }
 

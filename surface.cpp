@@ -129,7 +129,7 @@ void Surface::Face(const std::array<Vec3f, 3>& vertices, int color)
 			if (bc[0] >= 0 && bc[1] >= 0 && bc[2] >= 0)
 			{
 				point[2] = vertices[0][2] * bc[0] + vertices[1][2] * bc[1] + vertices[2][2] * bc[2]; //find the z value of this point
-				int index = (int)(point[0] + point[1] * width);
+				int index = (int)point[0] + (int)point[1] * width;
 				if (z_buffer[index] < point[2]) //if we're closer to the screen than the point already drawn, draw it
 				{
 					z_buffer[index] = point[2];

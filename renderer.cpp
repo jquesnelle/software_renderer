@@ -38,13 +38,18 @@ void render(unsigned char* pixels, int width, int height, int pitch)
 	{
 		const auto face = model.Face(i);
 
-		std::array<Vec2i, 3> screen;
+		std::array<Vec3f, 3> screen;
 		for (size_t j = 0; j < 3; ++j)
 		{
 			const auto& world = face[j];
 			auto x = world.get()[0];
 			auto y = world.get()[1];
-			screen[j] = Vec2i{ (int)((x + 1.0f)*half_width), height - (int)((y + 1.0f) * half_height) };
+			auto z = world.get()[2];
+			screen[j] = Vec3f { 
+				((x + 1.0f)*half_width) + .5f, 
+				height - ((y + 1.0f) * half_height) + .5f,
+				z
+			};
 		}
 
 		const Vec3f& f2 = face[2];
@@ -57,7 +62,7 @@ void render(unsigned char* pixels, int width, int height, int pitch)
 		if (intensity > 0)
 		{
 			int intensity_color = (int)(intensity * 255);
-			surface.Triangle(screen, Surface::RGB(intensity_color, intensity_color, intensity_color));
+			surface.Face(screen, Surface::RGB(intensity_color, intensity_color, intensity_color));
 		}
 			
 	}
