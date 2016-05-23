@@ -121,10 +121,13 @@ void Surface::Face(const std::array<Vec3f, 3>& vertices, int color)
 	}
 
 	Vec3f point;
-	for (point[0] = box_min[0]; point[0] <= box_max[0]; ++point[0])
+	int x, y, z = 0;
+	for (x = (int)box_min[0]; x <= (int)box_max[0]; ++x) //need to step by ints, stepping by floats causes holes
 	{
-		for (point[1] = box_min[1]; point[1] <= box_max[1]; ++point[1])
+		point[0] = (float)x;
+		for (y = (int)box_min[1]; y <= (int)box_max[1]; ++y)
 		{
+			point[1] = (float)y;
 			auto bc = Barycentric<float>(vertices, point);
 			if (bc[0] >= 0 && bc[1] >= 0 && bc[2] >= 0)
 			{
